@@ -45,8 +45,11 @@ app.post('/download', (req, res) => {
     const cid = new CID(req.body.cid)
 
     const content = getFile(cid)
-             
-    res.render('home')
+
+    content.then(data => {
+        console.log('downloaded:', data)                    
+        res.render('download', {cid, data})
+    })        
 })
 
 const addFile = async (fileName, filePath) => {
@@ -66,10 +69,10 @@ const getFile = async (cid) => {
         chunks.push(chunk)
     }
 
-    console.log('Added file contents:', chunks)
     data = uint8ArrayConcat(chunks)
-    console.log('Added file contents:', data.toString())
-    console.log('Added file contents:', uint8ArrayToString(data))
+    content = uint8ArrayToString(data)
+
+    return content
 }
 
 app.listen(3000,'127.0.0.1', () => {
