@@ -48,6 +48,8 @@ app.post('/download', (req, res) => {
     const content = getFile(cid)
 
     content.then(data => {
+        data = JSON.stringify(JSON.parse(data),null,2); 
+    
         console.log('downloaded:', data)          
         res.render('download', {cid, data})
     })        
