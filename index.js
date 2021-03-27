@@ -22,7 +22,7 @@ app.get('/', (req,res) => {
 
 app.post('/upload', (req, res) => {
     const file = req.files.file
-    const fileName = req.body.fileName
+    const fileName = req.files.file.name
     const filePath =   'files/' + fileName
 
     file.mv(filePath, async (err) => {
@@ -35,15 +35,14 @@ app.post('/upload', (req, res) => {
 
         fs.unlink(filePath, (err) => {
             if (err) console.log(err)
-        })  
+        })
          
         res.render('upload', {fileName, fileHash})
     })
 })
 
 app.post('/download', (req, res) => {
-    const cid = new CID(req.body.cid)
-
+    const cid = req.body.cid
     const content = getFile(cid)
 
     content.then(data => {
@@ -58,7 +57,19 @@ const addFile = async (fileName, filePath) => {
     const fileHash = fileAdded.cid
 
     console.log(fileAdded)
+
     return fileHash
+
+    // meta = { 
+    //     did: "urn:uuid:53572cf1-556a-4844-bc26-057bfc27432e", 
+    //     cid: fileHash.string 
+    // }
+    // console.log(meta)
+
+    // const metaAdded = await ipfs.add({content: meta})
+    // console.log(metaAdded)
+
+    // return metaHash.cid
 }
 
 const getFile = async (cid) => {
