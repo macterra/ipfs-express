@@ -6,6 +6,7 @@ const fs = require('fs')
 const CID = require('cids')
 const uint8ArrayConcat = require('uint8arrays/concat')
 const uint8ArrayToString = require('uint8arrays/to-string')
+const { v4: uuidv4 } = require('uuid')
 
 const ipfs = new ipfsClient({host:'localhost', port: '5001', protocol:'http'})
 const app = express()
@@ -18,6 +19,7 @@ app.use(fileUpload())
 app.get('/', (req,res) => {
     res.render('home')
     console.log('home hit')
+    console.log(uuidv4())
 })
 
 app.post('/upload', (req, res) => {
@@ -58,9 +60,17 @@ const addFile = async (fileName, filePath) => {
 
     console.log(fileAdded)
 
+    const did = 'urn:uuid:' + uuidv4()
+
     meta = { 
-        did: "urn:uuid:53572cf1-556a-4844-bc26-057bfc27432e", 
-        cid: fileHash.string 
+        did: did,
+        prev: "",
+        time: (new Date()).toJSON(),
+        asset: {
+            cid: fileHash.string,
+            name: fileName,
+            content_type: "image/png"
+        }
     }
     console.log(meta)
 
