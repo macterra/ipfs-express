@@ -46,7 +46,7 @@ app.post('/download', (req, res) => {
     const content = getFile(cid)
 
     content.then(data => {
-        console.log('downloaded:', data)                    
+        console.log('downloaded:', data)          
         res.render('download', {cid, data})
     })        
 })
@@ -58,18 +58,16 @@ const addFile = async (fileName, filePath) => {
 
     console.log(fileAdded)
 
-    return fileHash
+    meta = { 
+        did: "urn:uuid:53572cf1-556a-4844-bc26-057bfc27432e", 
+        cid: fileHash.string 
+    }
+    console.log(meta)
 
-    // meta = { 
-    //     did: "urn:uuid:53572cf1-556a-4844-bc26-057bfc27432e", 
-    //     cid: fileHash.string 
-    // }
-    // console.log(meta)
-
-    // const metaAdded = await ipfs.add({content: meta})
-    // console.log(metaAdded)
-
-    // return metaHash.cid
+    const metaAdded = await ipfs.add(JSON.stringify(meta))
+    console.log(metaAdded)
+    
+    return metaAdded.cid
 }
 
 const getFile = async (cid) => {
